@@ -1,78 +1,63 @@
 const express = require("express");
 const cors = require("cors");
-const { Pool } = require("pg");
 
 const app = express();
-
 app.use(cors());
-app.use(express.json());
 
-// PostgreSQL connection
-const pool = new Pool({
-  user: "postgres",
-  host: "localhost",
-  database: "college_db",
-  password: "postgres123",
-  port: 5432,
-});
+const PORT = 5000;
 
-// GET colleges
-app.get("/colleges", async (req, res) => {
-  try {
-    const result = await pool.query("SELECT * FROM colleges ORDER BY id");
-    res.json(result.rows);
-  } catch (error) {
-    console.error(error);
-    res.status(500).send("Error fetching colleges");
+// College Data (No Images)
+const colleges = [
+  {
+    name: "IIT Delhi",
+    fees: "₹2,00,000/year",
+    rating: 4.8,
+    location: "Delhi",
+    courses: "Engineering, Technology"
+  },
+  {
+    name: "NIT Trichy",
+    fees: "₹1,80,000/year",
+    rating: 4.7,
+    location: "Tamil Nadu",
+    courses: "Engineering"
+  },
+  {
+    name: "BITS Pilani",
+    fees: "₹2,20,000/year",
+    rating: 4.6,
+    location: "Rajasthan",
+    courses: "Engineering, Science"
+  },
+  {
+    name: "VIT Vellore",
+    fees: "₹1,95,000/year",
+    rating: 4.5,
+    location: "Tamil Nadu",
+    courses: "Engineering, Management"
+  },
+  {
+    name: "SRM University",
+    fees: "₹2,10,000/year",
+    rating: 4.4,
+    location: "Chennai",
+    courses: "Engineering, Medical"
+  },
+  {
+    name: "SRKR",
+    fees: "₹1,20,000/year",
+    rating: 4.3,
+    location: "Bhimavaram",
+    courses: "Engineering"
   }
+];
+
+// API Route
+app.get("/colleges", (req, res) => {
+  res.json(colleges);
 });
 
-// POST add college
-app.post("/colleges", async (req, res) => {
-  try {
-    const {
-      name,
-      location,
-      fees,
-      rating,
-      placement_percentage,
-    } = req.body;
-
-    const result = await pool.query(
-      `INSERT INTO colleges 
-       (name, location, fees, rating, placement_percentage)
-       VALUES ($1, $2, $3, $4, $5)
-       RETURNING *`,
-      [name, location, fees, rating, placement_percentage]
-    );
-
-    res.json(result.rows[0]);
-
-  } catch (error) {
-    console.error(error);
-    res.status(500).send("Error adding college");
-  }
-});
-
-// Start server
-app.listen(5000, () => {
-  console.log("Server running on port 5000");
-});
-
-// DELETE college
-app.delete("/colleges/:id", async (req, res) => {
-  try {
-    const { id } = req.params;
-
-    await pool.query(
-      "DELETE FROM colleges WHERE id = $1",
-      [id]
-    );
-
-    res.send("College deleted");
-
-  } catch (error) {
-    console.error(error);
-    res.status(500).send("Error deleting college");
-  }
+// Start Server
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
