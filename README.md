@@ -41,6 +41,3 @@ college-platform/
 └── .gitignore
 
 
-## 🚀 How to Run Project
-
-Backend:
